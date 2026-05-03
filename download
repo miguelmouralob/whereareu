@@ -1,0 +1,4 @@
+# Nunca enviar para o GitHub
+.env
+.env.local
+dist/
