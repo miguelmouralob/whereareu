@@ -9,12 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  window._firebaseModules = { initializeApp, getDatabase, ref, set, onValue, remove };
-</script>
+<!-- Firebase carregado via CDN compatível -->
 <style>
   :root {
     --bg: #060b18;
@@ -351,19 +346,20 @@
 </div>
 
 <script type="module">
-const { initializeApp, getDatabase, ref, set, onValue, remove } = window._firebaseModules;
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ── Firebase config (injetada pelo build do Netlify) ──
+// ── Firebase config ──
 const app = initializeApp({
-  apiKey: "FIREBASE_API_KEY",
-  authDomain: "FIREBASE_AUTH_DOMAIN",
-  databaseURL: "FIREBASE_DATABASE_URL",
-  projectId: "FIREBASE_PROJECT_ID",
-  storageBucket: "FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-  appId: "FIREBASE_APP_ID"
+  apiKey: "AIzaSyA4sAle4wqTXPVx82ee5SnBmKdOvHOm_Y4",
+  authDomain: "wherareu-a31b5.firebaseapp.com",
+  databaseURL: "https://wherareu-a31b5-default-rtdb.firebaseio.com",
+  projectId: "wherareu-a31b5",
+  storageBucket: "wherareu-a31b5.firebasestorage.app",
+  messagingSenderId: "524849394130",
+  appId: "1:524849394130:web:066f92aacb7552b212980b"
 });
-// ──────────────────────────────────────────────────────
+// ────────────────────────────────────────────────────
 
 const db = getDatabase(app);
 
@@ -400,9 +396,16 @@ window.createRoom = function() {
   const name = document.getElementById('username').value.trim();
   if (!name) { showError('Digite seu nome primeiro!'); return; }
   roomId = genCode();
-  document.getElementById('room-code').textContent = roomId;
   myName = name; myRole = 'host';
-  startSession();
+
+  // Mostra o código e troca o botão
+  document.getElementById('room-code').textContent = roomId;
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = '→ Entrar no mapa';
+  btn.onclick = startSession;
+  const err = document.getElementById('setup-error');
+  err.style.color = 'var(--accent)';
+  err.textContent = 'Compartilhe o código acima com seu amigo!';
 }
 
 // ── Entra na sala ──
