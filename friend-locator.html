@@ -469,6 +469,19 @@ async function onMyPosition(pos) {
     return;
   }
 
+  // Apaga dados ao fechar/sair da página
+  if (!window._cleanupRegistered) {
+    window._cleanupRegistered = true;
+    const cleanup = () => {
+      navigator.sendBeacon(
+        `https://wherareu-a31b5-default-rtdb.firebaseio.com/rooms/${roomId}/${myRole}.json`,
+        JSON.stringify(null)
+      );
+    };
+    window.addEventListener('beforeunload', cleanup);
+    window.addEventListener('pagehide', cleanup);
+  }
+
   updateMyMarker();
   updateStatus();
   listenFriend();
