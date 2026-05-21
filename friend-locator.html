@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -302,35 +302,35 @@
   <div>
     <span class="status-dot" id="my-dot"></span>
     <span class="status-dot friend" id="friend-dot" style="display:none"></span>
-    <span id="status-text">desconectado</span>
+    <span id="status-text">disconnected</span>
   </div>
 </header>
 
 <!-- SETUP -->
 <div id="setup-screen">
   <div class="setup-card">
-    <h2>Onde está seu amigo?</h2>
-    <p>Crie uma sala e compartilhe o código — ou entre numa sala existente.<br>Sem cadastro, sem conta.</p>
+    <h2>Where's your friend?</h2>
+    <p>Create a room and share the code — or join an existing one.<br>No sign-up, no account.</p>
 
     <div class="input-group">
-      <label>Seu nome</label>
-      <input type="text" id="username" placeholder="ex: João" maxlength="20">
+      <label>Your name</label>
+      <input type="text" id="username" placeholder="e.g. John" maxlength="20">
     </div>
 
     <div class="room-display">
       <span id="room-code">——</span>
-      <button class="copy-btn" onclick="copyRoom()">copiar</button>
+      <button class="copy-btn" onclick="copyRoom()">copy</button>
     </div>
 
-    <button class="btn btn-primary" onclick="createRoom()">✦ Criar sala</button>
+    <button class="btn btn-primary" onclick="createRoom()">✦ Create room</button>
 
     <div class="divider">ou</div>
 
     <div class="input-group">
-      <label>Código da sala</label>
-      <input type="text" id="join-code" placeholder="ex: X7K2" maxlength="6" style="text-transform:uppercase">
+      <label>Room code</label>
+      <input type="text" id="join-code" placeholder="e.g. X7K2" maxlength="6" style="text-transform:uppercase">
     </div>
-    <button class="btn btn-secondary" onclick="joinRoom()">→ Entrar na sala</button>
+    <button class="btn btn-secondary" onclick="joinRoom()">→ Join room</button>
 
     <div class="error-msg" id="setup-error"></div>
   </div>
@@ -340,7 +340,7 @@
 <div id="app-screen">
   <div id="map"></div>
   <div id="info-panel">
-    <div class="waiting-msg" id="waiting-msg">⟳ Aguardando seu amigo conectar...</div>
+    <div class="waiting-msg" id="waiting-msg">⟳ Waiting for your friend to connect...</div>
     <div id="stats-content" style="display:none"></div>
   </div>
 </div>
@@ -394,26 +394,26 @@ function makeIcon(color) {
 // ── Cria sala ──
 window.createRoom = function() {
   const name = document.getElementById('username').value.trim();
-  if (!name) { showError('Digite seu nome primeiro!'); return; }
+  if (!name) { showError('Please enter your name first!'); return; }
   roomId = genCode();
   myName = name; myRole = 'host';
 
   // Mostra o código e troca o botão
   document.getElementById('room-code').textContent = roomId;
   const btn = document.querySelector('.btn-primary');
-  btn.textContent = '→ Entrar no mapa';
+  btn.textContent = '→ Enter map';
   btn.onclick = startSession;
   const err = document.getElementById('setup-error');
   err.style.color = 'var(--accent)';
-  err.textContent = 'Compartilhe o código acima com seu amigo!';
+  err.textContent = 'Share the code above with your friend!';
 }
 
 // ── Entra na sala ──
 window.joinRoom = function() {
   const name = document.getElementById('username').value.trim();
   const code = document.getElementById('join-code').value.trim().toUpperCase();
-  if (!name) { showError('Digite seu nome!'); return; }
-  if (code.length < 4) { showError('Código inválido.'); return; }
+  if (!name) { showError('Please enter your name!'); return; }
+  if (code.length < 4) { showError('Invalid code.'); return; }
   roomId = code;
   document.getElementById('room-code').textContent = roomId;
   myName = name; myRole = 'guest';
@@ -424,8 +424,8 @@ window.copyRoom = function() {
   const code = document.getElementById('room-code').textContent;
   if (code === '——') return;
   navigator.clipboard.writeText(code);
-  document.querySelector('.copy-btn').textContent = 'copiado!';
-  setTimeout(() => document.querySelector('.copy-btn').textContent = 'copiar', 1500);
+  document.querySelector('.copy-btn').textContent = 'copied!';
+  setTimeout(() => document.querySelector('.copy-btn').textContent = 'copy', 1500);
 }
 
 function showError(msg) {
@@ -437,7 +437,7 @@ function showError(msg) {
 async function startSession() {
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'flex';
-  document.getElementById('status-text').textContent = 'obtendo localização...';
+  document.getElementById('status-text').textContent = 'getting location...';
   initMap();
   watchLocation();
 }
@@ -490,14 +490,14 @@ async function onMyPosition(pos) {
 // ── Demo mode (sem Firebase real) ──
 function useDemoMode(pos) {
   document.getElementById('my-dot').classList.add('online');
-  document.getElementById('status-text').textContent = 'modo demo (sem Firebase)';
+  document.getElementById('status-text').textContent = 'demo mode (no Firebase)';
   updateMyMarker();
   map.setView([pos.lat, pos.lng], 12);
 
   // Simula um amigo em São Paulo
   const demoFriendPos = { lat: -23.5505, lng: -46.6333 };
   friendPos = demoFriendPos;
-  const demoFriend = { name: 'Amigo Demo', lat: demoFriendPos.lat, lng: demoFriendPos.lng };
+  const demoFriend = { name: 'Demo Friend', lat: demoFriendPos.lat, lng: demoFriendPos.lng };
   document.getElementById('friend-dot').style.display = 'inline-block';
   document.getElementById('waiting-msg').style.display = 'none';
   document.getElementById('stats-content').style.display = 'block';
@@ -563,7 +563,7 @@ function fitBoth() {
 function updateStatus() {
   document.getElementById('my-dot').classList.add('online');
   document.getElementById('status-text').textContent =
-    friendPos ? 'você e seu amigo online' : 'você online — aguardando amigo';
+    friendPos ? 'you and your friend online' : 'you online — waiting for friend';
 }
 
 // ── Cálculos ──
@@ -585,14 +585,14 @@ function bearing(lat1, lng1, lat2, lng2) {
 }
 
 function bearingName(deg) {
-  const dirs = ['N','NE','L','SE','S','SO','O','NO'];
+  const dirs = ['N','NE','E','SE','S','SW','W','NW'];
   return dirs[Math.round(deg/45)%8];
 }
 
 function formatDist(km) {
   if (km < 1) return `${Math.round(km*1000)}m`;
   if (km < 100) return `${km.toFixed(1)}km`;
-  return `${Math.round(km).toLocaleString('pt-BR')}km`;
+  return `${Math.round(km).toLocaleString('en-US')}km`;
 }
 
 function travelTime(km, speedKmh) {
@@ -611,7 +611,7 @@ function getTimezone(lat, lng) {
 
 function fmtCoord(lat, lng) {
   const la = `${Math.abs(lat).toFixed(4)}° ${lat>=0?'N':'S'}`;
-  const lo = `${Math.abs(lng).toFixed(4)}° ${lng>=0?'L':'O'}`;
+  const lo = `${Math.abs(lng).toFixed(4)}° ${lng>=0?'E':'W'}`;
   return `${la}\n${lo}`;
 }
 
@@ -631,11 +631,11 @@ function renderStats(friend) {
   document.getElementById('stats-content').innerHTML = `
     <div class="stats-grid">
       <div class="stat-card highlight">
-        <div class="stat-label">Distância em linha reta</div>
+        <div class="stat-label">Straight-line distance</div>
         <div class="stat-value accent">${formatDist(km)}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Direção (você → amigo)</div>
+        <div class="stat-label">Direction (you → friend)</div>
         <div class="stat-value">${bear}° ${bearingName(bear)}</div>
       </div>
     </div>
@@ -643,31 +643,31 @@ function renderStats(friend) {
     <div class="travel-row">
       <div class="travel-card">
         <div class="travel-icon">✈️</div>
-        <div class="travel-label">Avião</div>
+        <div class="travel-label">Plane</div>
         <div class="travel-time">${travelTime(km, planeSpeed)}</div>
       </div>
       <div class="travel-card">
         <div class="travel-icon">🚗</div>
-        <div class="travel-label">Carro/Ônibus</div>
+        <div class="travel-label">Car/Bus</div>
         <div class="travel-time">${travelTime(km, carSpeed)}</div>
       </div>
       <div class="travel-card">
         <div class="travel-icon">🚶</div>
-        <div class="travel-label">A pé</div>
+        <div class="travel-label">Walking</div>
         <div class="travel-time">${travelTime(km, walkSpeed)}</div>
       </div>
     </div>
 
     <div class="locations-row">
       <div class="location-card">
-        <div class="location-name">◉ Você (${myName})</div>
+        <div class="location-name">◉ You (${myName})</div>
         <div class="location-coords">${fmtCoord(myPos.lat, myPos.lng)}</div>
-        <div class="location-tz">${myTZ} · Direção ao amigo: ${bear}° ${bearingName(bear)}</div>
+        <div class="location-tz">${myTZ} · Direction to friend: ${bear}° ${bearingName(bear)}</div>
       </div>
       <div class="location-card">
         <div class="location-name" style="color:#ff6b35">◉ ${friend.name}</div>
         <div class="location-coords">${fmtCoord(friend.lat, friend.lng)}</div>
-        <div class="location-tz">${friendTZ}${sameZone ? ' · mesmo fuso' : ' · fuso diferente ⚠️'} · Dir.: ${friendBear}° ${bearingName(friendBear)}</div>
+        <div class="location-tz">${friendTZ}${sameZone ? ' · same timezone' : ' · different timezone ⚠️'} · Dir.: ${friendBear}° ${bearingName(friendBear)}</div>
       </div>
     </div>
   `;
