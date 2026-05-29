@@ -29,7 +29,7 @@
     --glow: 0 0 20px rgba(0,245,196,0.3);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; min-height: 100vh; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
 
   header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); z-index: 100; flex-shrink: 0; }
   .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; }
@@ -39,7 +39,7 @@
   .status-dot.friend { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
   #status-text { font-size: 0.7rem; color: var(--muted); }
 
-  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; }
   .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 420px; text-align: center; }
   .setup-card h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
   .setup-card p { color: var(--muted); font-size: 0.78rem; line-height: 1.6; margin-bottom: 28px; }
@@ -131,6 +131,7 @@
     .location-city { font-size: 0.8rem; }
     .location-coords { font-size: 0.62rem; }
     .location-tz { font-size: 0.6rem; }
+    #setup-screen { align-items: flex-start; padding-top: 32px; padding-bottom: 32px;}
   }
 </style>
 </head>
@@ -190,6 +191,11 @@
     developed by Miguel Moura
   </div>
 </div>
+
+<!-- Footer -->
+  <div style="width: 100%;text-align:center;font-size:0.62rem;color:#5a6a85;letter-spacing:1px;font-family:'Space Mono',monospace;padding: 20px 0 16px 0;flex-shrink: 0;">
+    developed by Miguel Moura
+  </div>
 
 <!-- Leave modal -->
 <div class="modal-overlay" id="leave-modal">

@@ -1,133 +1,159 @@
 # 🌍 WherAreU
 
-> App de localização compartilhada em tempo real entre amigos — sem cadastro, sem conta, sem complicação.
+> Real-time shared location between friends — no sign-up, no account, no hassle.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9f1f8f3b-537e-4130-a286-59980a82cb1a/deploy-status)](https://whereareulocator.netlify.app)
 ![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat&logo=html5&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black)
 ![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=flat&logo=netlify&logoColor=white)
 
 ---
 
-## ✨ O que é
+## ✨ What is it
 
-**WherAreU** é uma PWA (Progressive Web App) que permite que duas pessoas vejam a localização uma da outra em tempo real num mapa interativo, com informações de distância, direção, fuso horário e estimativas de tempo de viagem.
+**WherAreU** is a PWA (Progressive Web App) that lets two people see each other's location in real time on an interactive map — with distance, direction, timezone info, travel time estimates, and real driving/walking routes.
 
-Ideal para saber onde um amigo está, acompanhar alguém em trânsito, ou simplesmente explorar a distância entre dois pontos no mundo.
-
----
-
-## 🚀 Funcionalidades
-
-- 📍 **Localização em tempo real** via GPS do dispositivo
-- 🗺️ **Mapa interativo** com marcadores personalizados para cada usuário
-- 📏 **Distância em linha reta** entre os dois pontos
-- 🧭 **Direção em graus** e ponto cardeal (dos dois lados)
-- 🌐 **Fuso horário estimado** de cada usuário, com alerta se forem diferentes
-- ✈️ **Estimativas de tempo de viagem** — avião, carro/ônibus e a pé
-- 🔑 **Sistema de salas** com código de 4 letras — sem cadastro
-- 🔒 **Dados apagados automaticamente** ao fechar o site
-- 📱 **Responsivo** — funciona em celular e desktop
+Built as a personal project for use between friends, no matter where in the world they are.
 
 ---
 
-## 🏗️ Tecnologias
+## 🚀 Features
 
-| Tecnologia | Uso |
+- 📍 Real-time location sharing via device GPS
+- 🗺️ Interactive dark map with custom markers
+- 📏 Straight-line distance between both points
+- 🧭 Bearing in degrees + cardinal direction (both ways)
+- 🌐 Estimated timezone for each user, with alert if different
+- ✈️ Travel time estimates — plane, car/bus, and walking
+- 🛣️ Real driving and walking routes (powered by OpenRouteService)
+- 🏙️ Reverse geocoding — shows city name for each user
+- 🔑 Room system with 4-letter code — no sign-up needed
+- 🔒 Location data auto-deleted when closing the site
+- ✕ Leave button to cleanly exit a room
+- 📱 Responsive + PWA installable on mobile
+
+---
+
+## 🏗️ Tech stack
+
+| Technology | Use |
 |---|---|
-| HTML / CSS / JavaScript | Frontend completo (single file) |
-| [Leaflet.js](https://leafletjs.com/) | Mapa interativo |
-| [Firebase Realtime Database](https://firebase.google.com/) | Sincronização de posições em tempo real |
-| [Netlify](https://netlify.com/) | Hospedagem com HTTPS e deploy automático |
-| [CartoDB Dark Matter](https://carto.com/basemaps/) | Tiles do mapa (tema escuro) |
-| Google Fonts (Space Mono + Syne) | Tipografia |
+| HTML / CSS / JavaScript | Full frontend (single file) |
+| [Leaflet.js](https://leafletjs.com/) | Interactive map |
+| [Firebase Realtime Database](https://firebase.google.com/) | Real-time location sync |
+| [OpenRouteService](https://openrouteservice.org/) | Driving & walking routes |
+| [Nominatim / OpenStreetMap](https://nominatim.org/) | Reverse geocoding (city names) |
+| [Netlify](https://netlify.com/) | Hosting with HTTPS + auto deploy |
+| [CartoDB Dark Matter](https://carto.com/basemaps/) | Dark map tiles |
 
 ---
 
-## 📁 Estrutura do repositório
+## 📁 Repository structure
 
 ```
 wherareu/
-├── friend-locator.html   # App completo (frontend single-file)
-├── netlify.toml          # Configuração de build e deploy do Netlify
-├── build.sh              # Script que injeta variáveis de ambiente no HTML
-├── .gitignore            # Arquivos ignorados pelo Git
-└── README.md             # Este arquivo
+├── friend-locator.html   # Full app (single-file frontend)
+├── config.example.js     # Credentials template (copy as config.js)
+├── icon.svg              # App icon (favicon + PWA)
+├── manifest.json         # PWA manifest
+├── netlify.toml          # Netlify build & deploy config
+├── build.sh              # Build script (injects env vars → config.js)
+├── .gitignore            # Excludes config.js and dist/
+└── README.md             # This file
 ```
+
+> `config.js` is **not tracked by git** — it contains your real API keys and is listed in `.gitignore`.
 
 ---
 
-## ⚙️ Como rodar localmente
+## ⚙️ Running locally
 
-> Requisito: ter um servidor local com HTTPS ou usar uma extensão como **Live Server** no VS Code — browsers modernos bloqueiam geolocalização em `file://`.
+> Requires a local HTTPS server — browsers block geolocation on `file://`. Use the **Live Server** extension in VS Code.
 
-1. Clone o repositório:
+1. Clone the repo:
    ```bash
    git clone https://github.com/miguelmouralob/wherareu.git
    cd wherareu
    ```
 
-2. Crie um projeto no [Firebase Console](https://console.firebase.google.com/), ative o **Realtime Database** e copie suas credenciais.
+2. Copy the config template and fill in your keys:
+   ```bash
+   cp config.example.js config.js
+   ```
 
-3. Substitua os placeholders no `friend-locator.html` com suas credenciais Firebase.
+3. Edit `config.js` with your Firebase and OpenRouteService credentials.
 
-4. Abra com Live Server ou qualquer servidor local com HTTPS.
+4. Open with Live Server.
 
 ---
 
 ## 🌐 Deploy (Netlify)
 
-O projeto usa um script de build (`build.sh`) que injeta as credenciais Firebase via variáveis de ambiente do Netlify — mantendo as chaves fora do código versionado.
+The `build.sh` script generates `config.js` from Netlify environment variables at build time — keeping all credentials out of the repository.
 
-### Variáveis de ambiente necessárias no Netlify:
+### Required environment variables:
 
-| Variável | Descrição |
+| Variable | Description |
 |---|---|
-| `FIREBASE_API_KEY` | Chave de API do Firebase |
-| `FIREBASE_AUTH_DOMAIN` | Domínio de autenticação |
-| `FIREBASE_DATABASE_URL` | URL do Realtime Database |
-| `FIREBASE_PROJECT_ID` | ID do projeto |
-| `FIREBASE_STORAGE_BUCKET` | Bucket de storage |
-| `FIREBASE_MESSAGING_SENDER_ID` | ID do sender |
-| `FIREBASE_APP_ID` | ID do app web |
+| `FIREBASE_API_KEY` | Firebase API key |
+| `FIREBASE_AUTH_DOMAIN` | Auth domain |
+| `FIREBASE_DATABASE_URL` | Realtime Database URL |
+| `FIREBASE_PROJECT_ID` | Project ID |
+| `FIREBASE_STORAGE_BUCKET` | Storage bucket |
+| `FIREBASE_MESSAGING_SENDER_ID` | Sender ID |
+| `FIREBASE_APP_ID` | Web app ID |
+| `ORS_API_KEY` | OpenRouteService API key |
 
-Configure em: **Project configuration → Environment variables**
-
----
-
-## 🔒 Segurança
-
-- Comunicação via **HTTPS** em todas as etapas
-- Salas identificadas por **código aleatório** — sem listagem pública
-- Posições **apagadas automaticamente** do banco ao fechar o site (`beforeunload` + `pagehide`)
-- Regras do Firebase validam formato e tipos dos dados gravados
-- Nenhuma informação pessoal além de nome e coordenadas GPS é armazenada
+Set these in: **Project configuration → Environment variables**
 
 ---
 
-## 🗺️ Como usar
+## 🔒 Security
 
-1. Acesse [whereareulocator.netlify.app](https://whereareulocator.netlify.app)
-2. Digite seu nome e clique em **"Criar sala"**
-3. Compartilhe o código de 4 letras com seu amigo
-4. Seu amigo acessa o mesmo link, digita o nome e o código e clica **"Entrar na sala"**
-5. Os dois aparecem no mapa em tempo real 🎉
-
----
-
-## 📄 Licença
-
-Projeto pessoal — uso livre para fins não comerciais.
+- All communication over **HTTPS**
+- Rooms identified by random 4-letter codes — no public listing
+- Location data **auto-deleted** on page close (`beforeunload` + `pagehide`)
+- Firebase rules validate data format and types
+- API keys kept out of the repository via `config.js` + `.gitignore`
+- No personal data stored beyond name and GPS coordinates
 
 ---
 
-## ⚠️ Aviso Legal
+## 🗺️ How to use
 
-Este é um **projeto experimental e educacional**, desenvolvido exclusivamente para fins de aprendizado e uso pessoal entre conhecidos.
+1. Open [whereareulocator.netlify.app](https://whereareulocator.netlify.app)
+2. Enter your name and click **"Create room"**
+3. Share the 4-letter code with your friend
+4. Your friend opens the same link, enters their name + the code, clicks **"Join room"**
+5. Both appear on the map in real time 🎉
 
-- Não possui fins comerciais, lucrativos ou de distribuição pública
-- O nome "WherAreU" é apenas um identificador informal para este projeto pessoal, sem qualquer registro de marca ou reivindicação comercial
-- Não há relação com nenhuma empresa, produto ou serviço existente com nome similar
-- O projeto não coleta, vende ou compartilha dados de terceiros
-- Uso por conta e risco próprio — sem garantias de disponibilidade ou precisão
+---
 
-> *"Feito pra aprender, não pra competir."* 😄
+## 📌 Roadmap
+
+- [ ] "Meet in the middle" button
+- [ ] Direct share link with room code embedded in URL
+- [ ] Notification when friend connects
+- [ ] Route history during session
+- [ ] Support for more than 2 users per room
+- [ ] Full PWA with offline support
+
+---
+
+## 👨‍💻 Author
+
+Developed by **Miguel Moura** — est. 2026
+
+---
+
+## ⚠️ Disclaimer
+
+This is an **experimental and educational project**, built for personal use between friends.
+
+- No commercial intent or public distribution
+- "WherAreU" is an informal identifier with no trademark claim
+- No relation to any existing product or service with a similar name
+- No third-party data is collected, sold, or shared
+- Use at your own risk — no guarantees of availability or accuracy
+
+> *"Built to learn, not to compete."* 😄
