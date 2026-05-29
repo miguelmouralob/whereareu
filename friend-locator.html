@@ -97,10 +97,13 @@
 
 <header>
   <div class="logo">Wher<span>Are</span>U</div>
-  <div>
-    <span class="status-dot" id="my-dot"></span>
-    <span class="status-dot friend" id="friend-dot" style="display:none"></span>
-    <span id="status-text">disconnected</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div>
+      <span class="status-dot" id="my-dot"></span>
+      <span class="status-dot friend" id="friend-dot" style="display:none"></span>
+      <span id="status-text">disconnected</span>
+    </div>
+    <button id="leave-btn" onclick="leaveRoom()" style="display:none;background:transparent;border:1px solid #ff4d4d;color:#ff4d4d;border-radius:6px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:0.68rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(255,77,77,0.1)'" onmouseout="this.style.background='transparent'">✕ leave</button>
   </div>
 </header>
 
@@ -197,12 +200,17 @@ async function fetchRoute(mode, lat1, lng1, lat2, lng2) {
 
 function genCode() { return Math.random().toString(36).slice(2,6).toUpperCase(); }
 
+let userMovedMap = false;
+let fitBothPending = false;
+
 function initMap() {
   map = L.map('map', { zoomControl: false }).setView([0, 0], 2);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 18
   }).addTo(map);
   L.control.zoom({ position: 'topright' }).addTo(map);
+  // Track manual map interactions
+  map.on('dragstart zoomstart', () => { userMovedMap = true; });
 }
 
 function makeIcon(color) {
@@ -253,8 +261,39 @@ async function startSession() {
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('app-screen').style.display = 'flex';
   document.getElementById('status-text').textContent = 'getting location...';
+  document.getElementById('leave-btn').style.display = 'inline-block';
   initMap();
   watchLocation();
+}
+
+async function leaveRoom() {
+  if (!confirm('Leave the room?')) return;
+  // Remove from Firebase
+  try {
+    const { ref: fbRef, remove: fbRemove } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    await fbRemove(fbRef(db, `rooms/${roomId}/${myRole}`));
+  } catch(e) {}
+  // Reset UI
+  if (myMarker) { map.removeLayer(myMarker); myMarker = null; }
+  if (friendMarker) { map.removeLayer(friendMarker); friendMarker = null; }
+  if (connectionLine) { map.removeLayer(connectionLine); connectionLine = null; }
+  if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+  myPos = null; friendPos = null; roomId = null; listenStarted = false;
+  document.getElementById('app-screen').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('leave-btn').style.display = 'none';
+  document.getElementById('my-dot').classList.remove('online');
+  document.getElementById('friend-dot').style.display = 'none';
+  document.getElementById('status-text').textContent = 'disconnected';
+  document.getElementById('room-code').textContent = '——';
+  document.getElementById('username').value = '';
+  document.getElementById('waiting-msg').style.display = 'block';
+  document.getElementById('stats-content').style.display = 'none';
+  document.getElementById('stats-content').innerHTML = '';
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = '✦ Create room';
+  btn.onclick = window.createRoom;
+  window._cleanupRegistered = false;
 }
 
 function watchLocation() {
@@ -372,9 +411,11 @@ function drawStraightLine() {
   }
 }
 
-function fitBoth() {
+function fitBoth(force = false) {
   if (!myPos || !friendPos) return;
+  if (!force && userMovedMap) return;
   map.fitBounds(L.latLngBounds([[myPos.lat, myPos.lng],[friendPos.lat, friendPos.lng]]), { padding: [60,60] });
+  userMovedMap = false;
 }
 
 function updateStatus() {
@@ -450,7 +491,7 @@ window.showRoute = async function(mode) {
     }
 
     drawStraightLine();
-    fitBoth();
+    fitBoth(true);
     return;
   }
 
