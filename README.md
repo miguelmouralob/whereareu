@@ -2,7 +2,7 @@
 
 > Real-time shared location between friends — no sign-up, no account, no hassle.
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/9f1f8f3b-537e-4130-a286-59980a82cb1a/deploy-status)](https://whereareulocator.netlify.app)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9f118f3b-537e-4130-a286-59980a82cb1a/deploy-status)](https://app.netlify.com/projects/whereareulocator/deploys)
 ![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat&logo=html5&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black)
 ![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=flat&logo=netlify&logoColor=white)
@@ -25,7 +25,7 @@ Built as a personal project for use between friends, no matter where in the worl
 - 🧭 Bearing in degrees + cardinal direction (both ways)
 - 🌐 Estimated timezone for each user, with alert if different
 - ✈️ Travel time estimates — plane, car/bus, and walking
-- 🛣️ Real driving and walking routes (powered by OpenRouteService)
+- 🛣️ Real driving and walking routes (powered by OSRM)
 - 🏙️ Reverse geocoding — shows city name for each user
 - 🔑 Room system with 4-letter code — no sign-up needed
 - 🔒 Location data auto-deleted when closing the site
@@ -41,7 +41,7 @@ Built as a personal project for use between friends, no matter where in the worl
 | HTML / CSS / JavaScript | Full frontend (single file) |
 | [Leaflet.js](https://leafletjs.com/) | Interactive map |
 | [Firebase Realtime Database](https://firebase.google.com/) | Real-time location sync |
-| [OpenRouteService](https://openrouteservice.org/) | Driving & walking routes |
+| [OSRM](https://project-osrm.org/) | Driving & walking routes |
 | [Nominatim / OpenStreetMap](https://nominatim.org/) | Reverse geocoding (city names) |
 | [Netlify](https://netlify.com/) | Hosting with HTTPS + auto deploy |
 | [CartoDB Dark Matter](https://carto.com/basemaps/) | Dark map tiles |
@@ -81,7 +81,7 @@ whereareu/
    cp config.example.js config.js
    ```
 
-3. Edit `config.js` with your Firebase and OpenRouteService credentials.
+3. Edit `config.js` with your Firebase credentials.
 
 4. Open with Live Server.
 
@@ -102,7 +102,6 @@ The `build.sh` script generates `config.js` from Netlify environment variables a
 | `FIREBASE_STORAGE_BUCKET` | Storage bucket |
 | `FIREBASE_MESSAGING_SENDER_ID` | Sender ID |
 | `FIREBASE_APP_ID` | Web app ID |
-| `ORS_API_KEY` | OpenRouteService API key |
 
 Set these in: **Project configuration → Environment variables**
 
@@ -114,7 +113,7 @@ Set these in: **Project configuration → Environment variables**
 - Rooms identified by random 4-letter codes — no public listing
 - Location data **auto-deleted** on page close (`beforeunload` + `pagehide`)
 - Firebase rules validate data format and types
-- API keys kept out of the repository via `config.js` + `.gitignore`
+- Firebase credentials kept out of the repository via `config.js` + `.gitignore`
 - No personal data stored beyond name and GPS coordinates
 
 ---

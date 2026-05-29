@@ -217,7 +217,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, set, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Keys loaded from config.js (not tracked by git)
-const { FIREBASE_CONFIG, ORS_API_KEY } = await import('./config.js');
+const { FIREBASE_CONFIG } = await import('./config.js');
 const app = initializeApp(FIREBASE_CONFIG);
 
 const db = getDatabase(app);
