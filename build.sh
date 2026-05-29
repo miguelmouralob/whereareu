@@ -1,7 +1,4 @@
 #!/bin/bash
-# Build script — gera config.js a partir das variáveis de ambiente do Netlify
-# e copia os arquivos para a pasta dist/
-
 mkdir -p dist
 
 # Gera o config.js com as keys das env vars do Netlify
@@ -19,7 +16,8 @@ export const FIREBASE_CONFIG = {
 export const ORS_API_KEY = "${ORS_API_KEY}";
 CONFIGEOF
 
-# Copia o HTML principal
 cp friend-locator.html dist/index.html
+cp icon.svg dist/icon.svg
+cp manifest.json dist/manifest.json
 
-echo "✅ Build concluído — config.js gerado com sucesso."
+echo "✅ Build concluído."

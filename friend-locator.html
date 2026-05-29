@@ -14,6 +14,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WherAreU">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
 <style>
   :root {
     --bg: #060b18;
@@ -26,7 +29,7 @@
     --glow: 0 0 20px rgba(0,245,196,0.3);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; min-height: 100vh; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
 
   header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); z-index: 100; flex-shrink: 0; }
   .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; }
@@ -36,7 +39,7 @@
   .status-dot.friend { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
   #status-text { font-size: 0.7rem; color: var(--muted); }
 
-  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; }
   .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 420px; text-align: center; }
   .setup-card h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
   .setup-card p { color: var(--muted); font-size: 0.78rem; line-height: 1.6; margin-bottom: 28px; }
@@ -128,6 +131,7 @@
     .location-city { font-size: 0.8rem; }
     .location-coords { font-size: 0.62rem; }
     .location-tz { font-size: 0.6rem; }
+    #setup-screen { align-items: flex-start; padding-top: 32px; padding-bottom: 32px;}
   }
 </style>
 </head>
@@ -145,7 +149,23 @@
   </div>
 </header>
 
+<!-- Browser toast -->
+<div id="browser-toast" style="
+  position:fixed;top:0;left:0;right:0;z-index:20000;
+  background:#1a2540;border-bottom:1px solid #1e2d4a;
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-family:'Space Mono',monospace;font-size:0.72rem;color:#e8edf5;
+  transform:translateY(0);transition:transform 0.4s ease;
+">
+  <span>🌐 For best experience, open in <strong>Chrome</strong> or <strong>Safari</strong></span>
+  <button onclick="document.getElementById('browser-toast').style.transform='translateY(-110%)'" style="background:none;border:1px solid #1e2d4a;color:#5a6a85;border-radius:4px;padding:3px 8px;cursor:pointer;font-family:'Space Mono',monospace;font-size:0.65rem;">✕</button>
+</div>
+
 <div id="setup-screen">
+  <!-- Corner labels -->
+  <div style="position:absolute;top:70px;left:20px;font-size:0.62rem;color:#5a6a85;letter-spacing:1.5px;font-family:'Space Mono',monospace;z-index:10">EST. 2026</div>
+  <div style="position:absolute;top:70px;right:20px;font-size:0.62rem;color:#5a6a85;letter-spacing:1.5px;font-family:'Space Mono',monospace;z-index:10">v.1.0</div>
+
   <div class="setup-card">
     <h2>Where's your friend?</h2>
     <p>Create a room and share the code — or join an existing one.<br>No sign-up, no account.</p>
@@ -167,6 +187,11 @@
     <div class="error-msg" id="setup-error"></div>
   </div>
 </div>
+
+<!-- Footer -->
+  <div style="width: 100%;text-align:center;font-size:0.62rem;color:#5a6a85;letter-spacing:1px;font-family:'Space Mono',monospace;padding: 20px 0 16px 0;flex-shrink: 0;">
+    developed by Miguel Moura
+  </div>
 
 <!-- Leave modal -->
 <div class="modal-overlay" id="leave-modal">
