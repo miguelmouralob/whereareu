@@ -14,6 +14,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WherAreU">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.json">
 <style>
   :root {
     --bg: #060b18;
@@ -145,7 +148,23 @@
   </div>
 </header>
 
+<!-- Browser toast -->
+<div id="browser-toast" style="
+  position:fixed;top:0;left:0;right:0;z-index:20000;
+  background:#1a2540;border-bottom:1px solid #1e2d4a;
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  font-family:'Space Mono',monospace;font-size:0.72rem;color:#e8edf5;
+  transform:translateY(0);transition:transform 0.4s ease;
+">
+  <span>🌐 For best experience, open in <strong>Chrome</strong> or <strong>Safari</strong></span>
+  <button onclick="document.getElementById('browser-toast').style.transform='translateY(-110%)'" style="background:none;border:1px solid #1e2d4a;color:#5a6a85;border-radius:4px;padding:3px 8px;cursor:pointer;font-family:'Space Mono',monospace;font-size:0.65rem;">✕</button>
+</div>
+
 <div id="setup-screen">
+  <!-- Corner labels -->
+  <div style="position:absolute;top:70px;left:20px;font-size:0.62rem;color:#5a6a85;letter-spacing:1.5px;font-family:'Space Mono',monospace;z-index:10">EST. 2026</div>
+  <div style="position:absolute;top:70px;right:20px;font-size:0.62rem;color:#5a6a85;letter-spacing:1.5px;font-family:'Space Mono',monospace;z-index:10">v.1.0</div>
+
   <div class="setup-card">
     <h2>Where's your friend?</h2>
     <p>Create a room and share the code — or join an existing one.<br>No sign-up, no account.</p>
@@ -165,6 +184,10 @@
     </div>
     <button class="btn btn-secondary" onclick="joinRoom()">→ Join room</button>
     <div class="error-msg" id="setup-error"></div>
+  </div>
+  <!-- Footer -->
+  <div style="position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:0.62rem;color:#5a6a85;letter-spacing:1px;font-family:'Space Mono',monospace;">
+    developed by Miguel Moura
   </div>
 </div>
 
