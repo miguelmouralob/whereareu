@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- PWA -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WherAreU">
 <style>
   :root {
     --bg: #060b18;
@@ -21,7 +26,7 @@
     --glow: 0 0 20px rgba(0,245,196,0.3);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
 
   header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); z-index: 100; flex-shrink: 0; }
   .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; }
@@ -54,7 +59,7 @@
   #app-screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
   #map { flex: 1; min-height: 0; position: relative; }
 
-  #info-panel { background: var(--surface); border-top: 1px solid var(--border); padding: 16px 20px; flex-shrink: 0; max-height: 45vh; overflow-y: auto; }
+  #info-panel { background: var(--surface); border-top: 1px solid var(--border); padding: 16px 20px; flex-shrink: 0; max-height: 45vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .waiting-msg { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 20px 0; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
@@ -91,6 +96,39 @@
   #info-panel::-webkit-scrollbar-track { background: transparent; }
   #info-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   .error-msg { color: #ff4d4d; font-size: 0.75rem; margin-top: 8px; text-align: center; }
+
+  /* Leave modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; align-items: center; justify-content: center; padding: 24px; }
+  .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 320px; text-align: center; }
+  .modal-box h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+  .modal-box p { color: var(--muted); font-size: 0.75rem; margin-bottom: 20px; line-height: 1.5; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+  .modal-btn-cancel { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
+  .modal-btn-confirm { background: #ff4d4d; color: white; }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    header { padding: 10px 14px; }
+    .logo { font-size: 1.1rem; }
+    #status-text { font-size: 0.62rem; }
+    .setup-card { padding: 28px 20px; border-radius: 12px; }
+    .setup-card h2 { font-size: 1.3rem; }
+    #info-panel { padding: 12px 14px; max-height: 48vh; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-value { font-size: 0.95rem; }
+    .travel-row { gap: 6px; }
+    .travel-card { padding: 8px 4px; }
+    .travel-icon { font-size: 1rem; }
+    .travel-time { font-size: 0.75rem; }
+    .travel-label { font-size: 0.52rem; }
+    .route-tabs { gap: 4px; }
+    .route-tab { font-size: 0.58rem; padding: 6px 3px; }
+    .locations-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .location-city { font-size: 0.8rem; }
+    .location-coords { font-size: 0.62rem; }
+    .location-tz { font-size: 0.6rem; }
+  }
 </style>
 </head>
 <body>
@@ -127,6 +165,18 @@
     </div>
     <button class="btn btn-secondary" onclick="joinRoom()">→ Join room</button>
     <div class="error-msg" id="setup-error"></div>
+  </div>
+</div>
+
+<!-- Leave modal -->
+<div class="modal-overlay" id="leave-modal">
+  <div class="modal-box">
+    <h3>Leave the room?</h3>
+    <p>Your location will be removed and your friend will lose the connection.</p>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="cancelLeave()">Stay</button>
+      <button class="modal-btn-confirm" onclick="confirmLeave()">Leave</button>
+    </div>
   </div>
 </div>
 
@@ -266,19 +316,22 @@ async function startSession() {
   watchLocation();
 }
 
-async function leaveRoom() {
-  if (!confirm('Leave the room?')) return;
-  // Remove from Firebase
+window.leaveRoom = function() {
+  document.getElementById('leave-modal').style.display = 'flex';
+}
+
+window.confirmLeave = async function() {
+  document.getElementById('leave-modal').style.display = 'none';
   try {
     const { ref: fbRef, remove: fbRemove } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
     await fbRemove(fbRef(db, `rooms/${roomId}/${myRole}`));
   } catch(e) {}
-  // Reset UI
   if (myMarker) { map.removeLayer(myMarker); myMarker = null; }
   if (friendMarker) { map.removeLayer(friendMarker); friendMarker = null; }
   if (connectionLine) { map.removeLayer(connectionLine); connectionLine = null; }
   if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
   myPos = null; friendPos = null; roomId = null; listenStarted = false;
+  userMovedMap = false;
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('setup-screen').style.display = 'flex';
   document.getElementById('leave-btn').style.display = 'none';
@@ -294,6 +347,10 @@ async function leaveRoom() {
   btn.textContent = '✦ Create room';
   btn.onclick = window.createRoom;
   window._cleanupRegistered = false;
+}
+
+window.cancelLeave = function() {
+  document.getElementById('leave-modal').style.display = 'none';
 }
 
 function watchLocation() {
