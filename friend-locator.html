@@ -137,7 +137,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyA4sAle4wqTXPVx82ee5SnBmKdOvHOm_Y4",
@@ -269,9 +269,17 @@ function watchLocation() {
 async function onMyPosition(pos) {
   myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
   try {
-    await set(ref(db, `rooms/${roomId}/${myRole}`), {
-      name: myName, lat: myPos.lat, lng: myPos.lng, ts: Date.now()
+    const userRef = ref(db, `rooms/${roomId}/${myRole}`);
+
+    await set(userRef, {
+      name: myName,
+      lat: myPos.lat,
+      lng: myPos.lng,
+      ts: Date.now()
     });
+
+    // Remove automaticamente ao desconectar
+    onDisconnect(userRef).remove();
   } catch(e) {
     useDemoMode(myPos); return;
   }
@@ -288,7 +296,7 @@ async function onMyPosition(pos) {
 
   updateMyMarker();
   updateStatus();
-  if (!listenStarted) { listenStarted = true; listenFriend(); }
+  if (!listenStarted) { listenStarted = true; listenFriend(); cleanupEmptyRoom(); }
 }
 
 function useDemoMode(pos) {
@@ -321,6 +329,18 @@ function listenFriend() {
     fitBoth();
     renderStats(data);
     updateStatus();
+  });
+}
+
+function cleanupEmptyRoom() {
+  const roomRef = ref(db, `rooms/${roomId}`);
+
+  onValue(roomRef, snapshot => {
+    const data = snapshot.val();
+
+    if (!data || (!data.host && !data.guest)) {
+      remove(roomRef);
+    }
   });
 }
 
