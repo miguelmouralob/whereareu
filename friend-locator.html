@@ -331,6 +331,11 @@ async function startSession() {
   document.getElementById('status-text').textContent = 'getting location...';
   document.getElementById('leave-btn').style.display = 'inline-block';
   initMap();
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 100);
+  
   watchLocation();
 }
 
