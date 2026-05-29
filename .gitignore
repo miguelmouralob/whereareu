@@ -1,0 +1,9 @@
+# Arquivo de configuração com keys sensíveis — NUNCA enviar ao GitHub
+config.js
+
+# Build output do Netlify
+dist/
+
+# Variáveis de ambiente locais
+.env
+.env.local

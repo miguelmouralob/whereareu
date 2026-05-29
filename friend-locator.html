@@ -98,7 +98,7 @@
   .error-msg { color: #ff4d4d; font-size: 0.75rem; margin-top: 8px; text-align: center; }
 
   /* Leave modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; padding: 24px; }
   .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; width: 100%; max-width: 320px; text-align: center; }
   .modal-box h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
   .modal-box p { color: var(--muted); font-size: 0.75rem; margin-bottom: 20px; line-height: 1.5; }
@@ -192,15 +192,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const app = initializeApp({
-  apiKey: "AIzaSyA4sAle4wqTXPVx82ee5SnBmKdOvHOm_Y4",
-  authDomain: "wherareu-a31b5.firebaseapp.com",
-  databaseURL: "https://wherareu-a31b5-default-rtdb.firebaseio.com",
-  projectId: "wherareu-a31b5",
-  storageBucket: "wherareu-a31b5.firebasestorage.app",
-  messagingSenderId: "524849394130",
-  appId: "1:524849394130:web:066f92aacb7552b212980b"
-});
+// Keys loaded from config.js (not tracked by git)
+const { FIREBASE_CONFIG, ORS_API_KEY } = await import('./config.js');
+const app = initializeApp(FIREBASE_CONFIG);
 
 const db = getDatabase(app);
 
@@ -230,7 +224,7 @@ async function reverseGeocode(lat, lng) {
 }
 
 // ── Routing via OpenRouteService ──
-const ORS_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjcwOTNkODJiZDUxZjQyNzU5Y2NjYzAwOTZiMTE5NTVlIiwiaCI6Im11cm11cjY0In0=';
+const ORS_KEY = ORS_API_KEY;
 async function fetchRoute(mode, lat1, lng1, lat2, lng2) {
   // mode: 'driving-car' | 'foot-walking'
   try {
