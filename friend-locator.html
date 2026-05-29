@@ -247,49 +247,38 @@ async function reverseGeocode(lat, lng) {
   } catch { return 'Unknown location'; }
 }
 
-// ── Routing via OpenRouteService ──
-const ORS_KEY = ORS_API_KEY;
+// ── Routing via OpenRouteService ── MUDANÇA !!!!!
 async function fetchRoute(mode, lat1, lng1, lat2, lng2) {
 
   try {
 
-    const res = await fetch(
-      `https://api.openrouteservice.org/v2/directions/${mode}/geojson`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': ORS_KEY,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          coordinates: [
-            [lng1, lat1],
-            [lng2, lat2]
-          ]
-        })
-      }
-    );
+    const profile =
+      mode === 'driving-car'
+        ? 'driving'
+        : 'foot';
 
-    console.log('ORS status:', res.status);
+    const url =
+      `https://router.project-osrm.org/route/v1/${profile}/${lng1},${lat1};${lng2},${lat2}?overview=full&geometries=geojson`;
+
+    const res = await fetch(url);
 
     if (!res.ok) {
-      const txt = await res.text();
-      console.log('ORS error:', txt);
+      console.log('OSRM status:', res.status);
       return null;
     }
 
     const data = await res.json();
 
-    console.log('ORS full response:', data);
+    console.log('OSRM response:', data);
 
-    const feature = data.features?.[0];
+    const route = data.routes?.[0];
 
-    if (!feature) return null;
+    if (!route) return null;
 
     return {
-      points: feature.geometry.coordinates.map(c => [c[1], c[0]]),
-      distance: feature.properties.summary.distance / 1000,
-      duration: feature.properties.summary.duration / 60
+      points: route.geometry.coordinates.map(c => [c[1], c[0]]),
+      distance: route.distance / 1000,
+      duration: route.duration / 60
     };
 
   } catch (err) {
