@@ -1,6 +1,6 @@
 {
-  "name": "WherAreU",
-  "short_name": "WherAreU",
+  "name": "WhereAreU",
+  "short_name": "WhereAreU",
   "description": "Real-time shared location between friends",
   "start_url": "/",
   "display": "standalone",
