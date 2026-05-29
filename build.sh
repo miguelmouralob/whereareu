@@ -1,14 +1,25 @@
 #!/bin/bash
-# Script de build — substitui os placeholders pelas variáveis de ambiente do Netlify
+# Build script — gera config.js a partir das variáveis de ambiente do Netlify
+# e copia os arquivos para a pasta dist/
 
+mkdir -p dist
+
+# Gera o config.js com as keys das env vars do Netlify
+cat > dist/config.js << CONFIGEOF
+export const FIREBASE_CONFIG = {
+  apiKey: "${FIREBASE_API_KEY}",
+  authDomain: "${FIREBASE_AUTH_DOMAIN}",
+  databaseURL: "${FIREBASE_DATABASE_URL}",
+  projectId: "${FIREBASE_PROJECT_ID}",
+  storageBucket: "${FIREBASE_STORAGE_BUCKET}",
+  messagingSenderId: "${FIREBASE_MESSAGING_SENDER_ID}",
+  appId: "${FIREBASE_APP_ID}"
+};
+
+export const ORS_API_KEY = "${ORS_API_KEY}";
+CONFIGEOF
+
+# Copia o HTML principal
 cp friend-locator.html dist/index.html
 
-sed -i "s|FIREBASE_API_KEY|$FIREBASE_API_KEY|g" dist/index.html
-sed -i "s|FIREBASE_AUTH_DOMAIN|$FIREBASE_AUTH_DOMAIN|g" dist/index.html
-sed -i "s|FIREBASE_DATABASE_URL|$FIREBASE_DATABASE_URL|g" dist/index.html
-sed -i "s|FIREBASE_PROJECT_ID|$FIREBASE_PROJECT_ID|g" dist/index.html
-sed -i "s|FIREBASE_STORAGE_BUCKET|$FIREBASE_STORAGE_BUCKET|g" dist/index.html
-sed -i "s|FIREBASE_MESSAGING_SENDER_ID|$FIREBASE_MESSAGING_SENDER_ID|g" dist/index.html
-sed -i "s|FIREBASE_APP_ID|$FIREBASE_APP_ID|g" dist/index.html
-
-echo "✅ Build concluído — credenciais injetadas com sucesso."
+echo "✅ Build concluído — config.js gerado com sucesso."
