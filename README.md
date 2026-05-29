@@ -1,4 +1,4 @@
-# 🌍 WherAreU
+# 🌍 WhereAreU
 
 > Real-time shared location between friends — no sign-up, no account, no hassle.
 
@@ -11,7 +11,7 @@
 
 ## ✨ What is it
 
-**WherAreU** is a PWA (Progressive Web App) that lets two people see each other's location in real time on an interactive map — with distance, direction, timezone info, travel time estimates, and real driving/walking routes.
+**WhereAreU** is a PWA (Progressive Web App) that lets two people see each other's location in real time on an interactive map — with distance, direction, timezone info, travel time estimates, and real driving/walking routes.
 
 Built as a personal project for use between friends, no matter where in the world they are.
 
@@ -51,7 +51,7 @@ Built as a personal project for use between friends, no matter where in the worl
 ## 📁 Repository structure
 
 ```
-wherareu/
+whereareu/
 ├── friend-locator.html   # Full app (single-file frontend)
 ├── config.example.js     # Credentials template (copy as config.js)
 ├── icon.svg              # App icon (favicon + PWA)
@@ -72,8 +72,8 @@ wherareu/
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/miguelmouralob/wherareu.git
-   cd wherareu
+   git clone https://github.com/miguelmouralob/whereareu.git
+   cd whereareu
    ```
 
 2. Copy the config template and fill in your keys:
@@ -151,7 +151,7 @@ Developed by **Miguel Moura** — est. 2026
 This is an **experimental and educational project**, built for personal use between friends.
 
 - No commercial intent or public distribution
-- "WherAreU" is an informal identifier with no trademark claim
+- "WhereAreU" is an informal identifier with no trademark claim
 - No relation to any existing product or service with a similar name
 - No third-party data is collected, sold, or shared
 - Use at your own risk — no guarantees of availability or accuracy
