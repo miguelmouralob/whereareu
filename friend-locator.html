@@ -39,7 +39,7 @@
   .status-dot.friend { background: var(--accent2); box-shadow: 0 0 8px var(--accent2); }
   #status-text { font-size: 0.7rem; color: var(--muted); }
 
-  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; position: relative; }
+  #setup-screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; overflow-y: auto; position: relative; padding: 50px; }
   .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 420px; text-align: center; }
   .setup-card h2 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
   .setup-card p { color: var(--muted); font-size: 0.78rem; line-height: 1.6; margin-bottom: 28px; }
@@ -186,12 +186,11 @@
     <button class="btn btn-secondary" onclick="joinRoom()">→ Join room</button>
     <div class="error-msg" id="setup-error"></div>
   </div>
-</div>
-
-<!-- Footer -->
-  <div style="width: 100%;text-align:center;font-size:0.62rem;color:#5a6a85;letter-spacing:1px;font-family:'Space Mono',monospace; padding: 20px 0 16px 0;">
+  <!-- Footer -->
+  <div style="width: 100%;text-align:center;font-size:0.62rem;color:#5a6a85;letter-spacing:1px;font-family:'Space Mono',monospace; padding: 20px;">
     developed by Miguel Moura
   </div>
+</div>
 
 <!-- Leave modal -->
 <div class="modal-overlay" id="leave-modal">
