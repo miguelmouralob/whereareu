@@ -401,48 +401,135 @@ function fmtCoord(lat, lng) {
 }
 
 // ── Route on map ──
-async function showRoute(mode) {
+window.showRoute = async function(mode) {
   activeRoute = mode;
-  // Update tab UI
-  document.querySelectorAll('.route-tab').forEach(t => t.classList.remove('active'));
+
+  // Atualiza abas
+  document.querySelectorAll('.route-tab').forEach(t => {
+    t.classList.remove('active');
+  });
+
   const tabEl = document.getElementById(`tab-${mode}`);
-  if (tabEl) tabEl.classList.add('active');
+  if (tabEl) {
+    tabEl.classList.add('active');
+  }
 
-  if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+  // Remove rota antiga
+  if (routeLayer) {
+    map.removeLayer(routeLayer);
+    routeLayer = null;
+  }
 
+  // Volta para linha reta
   if (mode === 'straight') {
+
+    // Remove linha anterior
+    if (connectionLine) {
+      map.removeLayer(connectionLine);
+      connectionLine = null;
+    }
+
     drawStraightLine();
     fitBoth();
     return;
   }
 
-  if (connectionLine) { map.removeLayer(connectionLine); connectionLine = null; }
+  // Remove linha reta
+  if (connectionLine) {
+    map.removeLayer(connectionLine);
+    connectionLine = null;
+  }
 
-  const orsMode = mode === 'drive' ? 'driving-car' : 'foot-walking';
-  const color = mode === 'drive' ? '#ff6b35' : '#00f5c4';
+  // Segurança
+  if (!myPos || !friendPos) {
+    console.log('Missing positions');
+    return;
+  }
 
-  const route = await fetchRoute(orsMode, myPos.lat, myPos.lng, friendPos.lat, friendPos.lng);
-  if (route) {
-    routeLayer = L.polyline(route.points, { color, weight: 4, opacity: 0.8 }).addTo(map);
-    map.fitBounds(routeLayer.getBounds(), { padding: [60,60] });
-    // Update travel card with real data
-    const cardId = mode === 'drive' ? 'travel-drive' : 'travel-walk';
-    const el = document.getElementById(cardId);
-    if (el) {
-      el.querySelector('.travel-time').textContent = fmtDuration(route.duration);
-      el.querySelector('.travel-label').textContent = `${mode === 'drive' ? 'Car/Bus' : 'Walking'} · ${formatDist(route.distance)}`;
-      el.classList.remove('loading', 'unavailable');
+  // Tipo de rota
+  const orsMode =
+    mode === 'drive'
+      ? 'driving-car'
+      : 'foot-walking';
+
+  const color =
+    mode === 'drive'
+      ? '#ff6b35'
+      : '#00f5c4';
+
+  try {
+
+    console.log('Fetching route...');
+
+    const route = await fetchRoute(
+      orsMode,
+      myPos.lat,
+      myPos.lng,
+      friendPos.lat,
+      friendPos.lng
+    );
+
+    console.log('Route result:', route);
+
+    // Se encontrou rota
+    if (route && route.points?.length > 0) {
+
+      routeLayer = L.polyline(route.points, {
+        color: color,
+        weight: 4,
+        opacity: 0.85
+      }).addTo(map);
+
+      map.fitBounds(
+        routeLayer.getBounds(),
+        { padding: [60, 60] }
+      );
+
+      // Atualiza card
+      const cardId =
+        mode === 'drive'
+          ? 'travel-drive'
+          : 'travel-walk';
+
+      const el = document.getElementById(cardId);
+
+      if (el) {
+        el.querySelector('.travel-time').textContent =
+          fmtDuration(route.duration);
+
+        el.querySelector('.travel-label').textContent =
+          `${mode === 'drive' ? 'Car/Bus' : 'Walking'} · ${formatDist(route.distance)}`;
+
+        el.classList.remove('loading');
+        el.classList.remove('unavailable');
+      }
+
+    } else {
+
+      console.log('No route found');
+
+      drawStraightLine();
+      fitBoth();
+
+      const cardId =
+        mode === 'drive'
+          ? 'travel-drive'
+          : 'travel-walk';
+
+      const el = document.getElementById(cardId);
+
+      if (el) {
+        el.querySelector('.travel-time').textContent = 'N/A';
+
+        el.classList.add('unavailable');
+        el.classList.remove('loading');
+      }
     }
-  } else {
-    // Route unavailable (ocean / different continent)
-    const cardId = mode === 'drive' ? 'travel-drive' : 'travel-walk';
-    const el = document.getElementById(cardId);
-    if (el) {
-      el.querySelector('.travel-time').textContent = 'N/A';
-      el.querySelector('.travel-label').textContent = mode === 'drive' ? 'Car/Bus' : 'Walking';
-      el.classList.add('unavailable');
-      el.classList.remove('loading');
-    }
+
+  } catch (err) {
+
+    console.error('Route error:', err);
+
     drawStraightLine();
     fitBoth();
   }
